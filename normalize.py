@@ -16,8 +16,7 @@ class PacketInfo:
 
 def normalize_scapy(pkt) -> PacketInfo:
     """
-    Приводимо scapy packet до єдиного формату PacketInfo,
-    щоб детектори були незалежні від бібліотеки.
+    Convert a Scapy packet to our internal PacketInfo format.
     """
     ts = getattr(pkt, "time", None)
     if ts is None:
@@ -38,7 +37,7 @@ def normalize_scapy(pkt) -> PacketInfo:
         info.proto = "ARP"
         info.src_ip = getattr(arp, "psrc", None)
         info.dst_ip = getattr(arp, "pdst", None)
-        # hwsrc/hwdst інколи корисніше за Ether
+        # Handle missing MAC fields safely
         info.src_mac = getattr(arp, "hwsrc", info.src_mac)
         info.dst_mac = getattr(arp, "hwdst", info.dst_mac)
         return info
@@ -56,7 +55,7 @@ def normalize_scapy(pkt) -> PacketInfo:
         info.proto = "TCP"
         info.src_port = int(getattr(tcp, "sport", 0) or 0)
         info.dst_port = int(getattr(tcp, "dport", 0) or 0)
-        # flags у scapy може бути числом або строкою
+        # Handle missing flags safely
         flags = getattr(tcp, "flags", "")
         info.tcp_flags = str(flags)
         return info

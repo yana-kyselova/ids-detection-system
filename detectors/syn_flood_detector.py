@@ -4,16 +4,16 @@ from normalize import PacketInfo
 
 class SynFloodDetector:
     """
-    SYN flood: багато SYN у вікні часу.
-    OSI: L4
+    SYN flood: SYN packet threshold exceeded for IP within window.
+    OSI: L4(Transport Layer).
     """
     def __init__(self, syn_threshold: int, window_sec: int, group_by: str = "dst", whitelist_ips=None):
         self.syn_threshold = int(syn_threshold)
         self.window_sec = int(window_sec)
-        self.group_by = group_by  # "dst" або "src"
+        self.group_by = group_by  # "dst" or "src"
         self.whitelist_ips = set(whitelist_ips or [])
 
-        # map[key] -> list of ts
+        # Map[key] -> list of ts
         self.history = defaultdict(list)
 
     def process(self, p: PacketInfo):
@@ -39,7 +39,7 @@ class SynFloodDetector:
 
         if len(self.history[key]) >= self.syn_threshold:
             return Alert(
-                ts=p.ts,
+                ts=float(p.ts),
                 alert_type="SYN_FLOOD",
                 severity="HIGH",
                 osi_layer="L4",

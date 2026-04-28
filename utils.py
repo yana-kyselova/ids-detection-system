@@ -6,8 +6,7 @@ import time
 @dataclass
 class SlidingCounter:
     """
-    Ковзне вікно: зберігаємо timestamps подій у deque,
-    чистимо все, що старіше за window_sec.
+    Sliding window: store timestamps in a deque and remove entries older than window_sec
     """
     window_sec: int
     data: Dict[Hashable, Deque[float]]

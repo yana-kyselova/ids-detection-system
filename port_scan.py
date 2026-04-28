@@ -1,29 +1,29 @@
 from scapy.all import IP, TCP, send, conf
 import time
 
-# --- НААЛАШТУВАННЯ---
-# Використовуємо 8.8.8.8, щоб пакети гарантировано пішли в мережу, а не в Loopback
+# --- CONFIGURATION ---
+# Use external IP (8.8.8.8) to force traffic through the network interface instead of loopback
 target_ip = "8.8.8.8" 
 start_port = 1
 end_port = 100 
 # -----------------
 
-print(f"[*] Иніціація атаки Port Scanning на {target_ip}...")
-print(f"[*] Використаний інтерфейс: {conf.iface}")
+print(f"[*] Initializing port scan on {target_ip}...")
+print(f"[*] Active interface: {conf.iface}")
 
 try:
     for port in range(start_port, end_port + 1):
-        # Створюємо пакет
+        # Construct a SYN packet for the target destination and port
         packet = IP(dst=target_ip) / TCP(dport=port, flags="S")
         
-        # Відправляємо
+        # Send the packet without verbose output
         send(packet, verbose=False)
         
         if port % 20 == 0:
-            print(f"[>] Проскановано {port} портов...")
+            print(f"[>] Scanned {port} ports...")
         
-        time.sleep(0.02) # Трішки сповільнюємо для стабільності
+        time.sleep(0.02) # Slightly slow down for stability
 
-    print("\n[+] Атака завершена! Перевір вікно IDS.")
+    print("\n[+] Attack complete! Check the IDS window.")
 except Exception as e:
-    print(f"[-] Помилка: {e}. Запустіть термінал від імені АДМІНІСТРАТОРА!")
+    print(f"[-] Error: {e}. Please run the terminal as ADMINISTRATOR!")

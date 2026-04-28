@@ -19,7 +19,7 @@ class Storage:
         self.alerts_log = alerts_log
         self.events_jsonl = events_jsonl
 
-        # створимо файли, якщо їх немає
+        # Ensure directories exist for log files
         for path in [self.alerts_log, self.events_jsonl]:
             folder = os.path.dirname(path)
             if folder and not os.path.exists(folder):

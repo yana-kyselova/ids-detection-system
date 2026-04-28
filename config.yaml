@@ -1,5 +1,5 @@
 mode: live          # live | pcap
-iface:        # інтерфейс для live
+iface:        # only for live mode
 pcap_path: samples/test.pcap
 
 whitelist:
@@ -10,7 +10,7 @@ thresholds:
   rate_threshold_pps: 500
 
   syn_flood_syn_per_window: 120
-  syn_window_sec: 10
+  syn_window_sec: 10 
 
   portscan_ports_per_window: 25
   portscan_window_sec: 30

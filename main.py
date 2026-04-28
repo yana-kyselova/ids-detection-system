@@ -72,7 +72,7 @@ def main():
     def on_packet(pkt):
         info = normalize_scapy(pkt)
 
-        # проігноруємо whitelist IP на рівні L3/L4 (зручно)
+        # Whitelist check: if src or dst IP is in whitelist, skip processing.
         wl_ips = set(cfg.get("whitelist", {}).get("ips", []))
         if info.src_ip in wl_ips or info.dst_ip in wl_ips:
             return
@@ -83,31 +83,29 @@ def main():
                 storage.write_alert(alert)
                 print(f"[{alert.severity}] {alert.alert_type} ({alert.osi_layer}) {alert.details or ''}")
 
-    # режим запуску
+    # Offline mode: process traffic from a PCAP file
     if args.pcap:
         capture_pcap(args.pcap, on_packet)
         print("PCAP processed.")
         return
 
     if args.live or cfg.get("mode") == "live":
-        from scapy.all import conf # Імпорт всередині для надійності
+        from scapy.all import conf # Import Scapy only when needed (lazy load)
         
-        # 1. Спочатку шукаємо те, що ввели в консолі (--iface)
-        # 2. Якщо пусто, шукаємо в конфігу (cfg.get("iface"))
-        # 3. Якщо пусто і там пусто чи там "eth0", беремо авто-вибір (conf.iface)
+        # Interface priority: CLI arg > config file > Scapy auto-detection
         iface = args.iface or cfg.get("iface")
         
         if not iface or iface == "eth0":
             iface = conf.iface
             
-        # Перетворюємо на строку, так як Windows любить об'єкти замість імен
+        # Ensure interface name is string (handle Scapy bytes return)
         iface_name = str(iface)
 
         print(f"--- [ IDS ACTIVE ] СЛУХАЮ ТРАФІК: {iface} ---")
         capture_live(iface_name, on_packet)
         return
 
-    # якщо конфіг каже pcap
+    # Fallback to config mode if no CLI args provided
     if cfg.get("mode") == "pcap":
         pcap_path = cfg.get("pcap_path")
         if not pcap_path:

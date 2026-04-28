@@ -1,16 +1,21 @@
 === MINI-IDS REPORT ===
 
 Alerts by type:
-  RATE_SPIKE: 27752
-  ARP_SPOOF: 4493
+  RATE_SPIKE: 78442
+  ARP_SPOOF: 7071
+  SYN_FLOOD: 381
+  PORT_SCAN: 158
 
 Alerts by severity:
-  MEDIUM: 27752
-  HIGH: 4493
+  MEDIUM: 78442
+  HIGH: 7610
 
 Alerts by OSI layer:
-  L3/L4: 27752
-  L2: 4493
+  L3/L4: 78442
+  L2: 7071
+  L4: 539
 
 Top sources:
-  192.168.1.1: 4493
+  192.168.1.1: 7071
+  192.168.1.115: 461
+  192.168.1.102: 78
