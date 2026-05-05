@@ -39,7 +39,7 @@ class ArpSpoofDetector:
 
         macs = {m for (_, m) in self.history[p.src_ip]}
         # Multiple MACs for one IP within window = potential ARP spoofing.
-        if len(macs) >= 2:
+        if len(macs) >= self.mac_changes_threshold:
             return Alert(
                 ts=float(p.ts),
                 alert_type="ARP_SPOOF",

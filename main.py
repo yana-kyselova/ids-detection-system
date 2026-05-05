@@ -40,7 +40,7 @@ def build_detectors(cfg: dict):
         syn_threshold=th.get("syn_flood_syn_per_window", 120),
         window_sec=th.get("syn_window_sec", 10),
         group_by="dst",
-        whitelist_ips=[]
+        whitelist_ips=wl_ips
     )
 
     return [rate, arp, portscan, synflood]
@@ -55,6 +55,8 @@ def main():
     args = parser.parse_args()
    
     cfg = load_config(args.config)
+    # Whitelist check: if src or dst IP is in whitelist, skip processing.
+    wl_ips = set(cfg.get("whitelist", {}).get("ips", []))
 
     out_cfg = cfg.get("output", {})
     storage = Storage(
@@ -72,8 +74,6 @@ def main():
     def on_packet(pkt):
         info = normalize_scapy(pkt)
 
-        # Whitelist check: if src or dst IP is in whitelist, skip processing.
-        wl_ips = set(cfg.get("whitelist", {}).get("ips", []))
         if info.src_ip in wl_ips or info.dst_ip in wl_ips:
             return
 
